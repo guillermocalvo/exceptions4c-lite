@@ -28,7 +28,8 @@ check_PROGRAMS =                    \
     bin/check/throw-uncaught        \
     bin/check/throw                 \
     bin/check/throwf-uncaught       \
-    bin/check/throwf
+    bin/check/throwf                \
+    bin/check/pet-store
 
 TESTS =                             \
     bin/check/catch-all             \
@@ -60,3 +61,18 @@ bin_check_throw_uncaught_SOURCES    = tests/throw-uncaught.c
 bin_check_throw_SOURCES             = tests/throw.c
 bin_check_throwf_uncaught_SOURCES   = tests/throwf-uncaught.c
 bin_check_throwf_SOURCES            = tests/throwf.c
+bin_check_pet_store_SOURCES         = examples/pet-store.c
+
+
+# Generate documentation
+
+docs: docs/html/index.html
+
+docs/html/index.html: docs/Doxyfile docs/doxygen-awesome.css docs/doxygen-awesome-sidebar-only.css
+	doxygen docs/Doxyfile
+
+docs/doxygen-awesome.css:
+	wget --verbose --output-document docs/doxygen-awesome.css https://github.com/jothepro/doxygen-awesome-css/raw/refs/heads/main/doxygen-awesome.css
+
+docs/doxygen-awesome-sidebar-only.css:
+	wget --verbose --output-document docs/doxygen-awesome-sidebar-only.css https://github.com/jothepro/doxygen-awesome-css/raw/refs/heads/main/doxygen-awesome-sidebar-only.css

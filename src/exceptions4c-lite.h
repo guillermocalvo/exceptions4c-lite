@@ -14,6 +14,36 @@
  * limitations under the License.
  */
 
+/**
+ * Really lightweight exception handling for C.
+ *
+ * <img src="exceptions4c-lite.svg">
+ *
+ * This library consists of one header file only. All you need to do is copy
+ * `exceptions4c-lite.h` into your project, include it, and define a global
+ * variable `exceptions4c`.
+ *
+ * ```c
+ * #include <exceptions4c-lite.h>
+ *
+ * struct e4c_context exceptions4c = {0};
+ * ```
+ *
+ * Since it's a header-only library, there is no library code to link against.
+ *
+ * @note
+ * This is the lightweight version of <strong>exceptions4c</strong>. You may
+ * also want to try the full version of the library on
+ * [GitHub](https://github.com/guillermocalvo/exceptions4c).
+ *
+ * @file        exceptions4c-lite.h
+ * @version     0.1.0
+ * @author      [Guillermo Calvo](https://guillermo.dev)
+ * @copyright   Licensed under Apache 2.0
+ * @see         For more information, visit the
+ *              [project on GitHub](https://github.com/guillermocalvo/exceptions4c-lite)
+ */
+
 #ifndef EXCEPTIONS4C_LITE
 
 /**
