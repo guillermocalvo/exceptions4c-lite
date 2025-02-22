@@ -7,7 +7,7 @@
 ![Lightweight exception handling for C][LOGO]
 
 
-## Really lightweight exception handling for C
+## Lightweight Exception Handling for C
 
 Bring the power of exceptions to your C applications with this header-only library!
 

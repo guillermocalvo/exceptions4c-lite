@@ -17,7 +17,9 @@
 /**
  * Really lightweight exception handling for C.
  *
+ * <a href="https://exceptions4c-lite.guillermo.dev/">
  * <img src="exceptions4c-lite.svg">
+ * </a>
  *
  * This library consists of one header file only. All you need to do is copy
  * `exceptions4c-lite.h` into your project, include it, and define a global
@@ -31,7 +33,7 @@
  *
  * Since it's a header-only library, there is no library code to link against.
  *
- * @note
+ * @remark
  * This is the lightweight version of <strong>exceptions4c</strong>. You may
  * also want to try the full version of the library on
  * [GitHub](https://github.com/guillermocalvo/exceptions4c).
@@ -39,9 +41,12 @@
  * @file        exceptions4c-lite.h
  * @version     0.1.0
  * @author      [Guillermo Calvo](https://guillermo.dev)
- * @copyright   Licensed under Apache 2.0
- * @see         For more information, visit the
- *              [project on GitHub](https://github.com/guillermocalvo/exceptions4c-lite)
+ * @copyright   Licensed under [Apache 2.0]
+ * @see         For more information, visit the [project on GitHub]
+ *
+ * [Guillermo Calvo]: https://guillermo.dev
+ * [Apache 2.0]: http://www.apache.org/licenses/LICENSE-2.0
+ * [project on GitHub]: https://github.com/guillermocalvo/exceptions4c-lite
  */
 
 #ifndef EXCEPTIONS4C_LITE
@@ -139,45 +144,42 @@
 /**
  * Represents a category of problematic situations in a program.
  *
- * Defines a kind of error or exceptional condition that a program might want to
+ * Defines a kind of error or exceptional condition that a program MAY want to
  * #THROW and #CATCH. It serves as a way to group related issues that share
  * common characteristics.
  *
  * Exception types SHOULD be defined as <tt>const</tt>.
  *
- * ```c
- * const e4c_exception_type IO_ERROR = "I/O Error";
- * ```
+ * @snippet pet-store.c exception_types
  *
  * @see THROW
  * @see CATCH
  */
-typedef const char * e4c_exception_type;
+typedef const char *e4c_exception_type;
 
 /**
  * Represents a specific occurrence of an exceptional situation in a program.
  *
- * #e4c_exception combines an [exception type](#e4c_exception_type) with a
- * detailed error message that provides specific information about what went
- * wrong in this particular instance.
+ * An [exception](#e4c_exception) combines a [type](#e4c_exception_type) with a
+ * detailed error message and specific information about what went wrong in this
+ * particular instance.
  *
- * After an exception is [thrown](#THROW), it may propagate through the program
- * and be caught by an appropriate #CATCH or #CATCH_ALL block.
+ * After an exception is [thrown](#THROW), it propagates through the program and
+ * MAY be caught by an appropriate #CATCH or #CATCH_ALL block.
  *
  * @remark
- * When an exception is caught, #EXCEPTION can be used to retrieve the exception
+ * When an exception is caught, #EXCEPTION MAY be used to retrieve the exception
  * currently being handled. This allows for inspection and further handling of
  * the error, based on both its type and the detailed context of the situation.
  *
  * @see EXCEPTION
  */
 struct e4c_exception {
-
     /** The general category of the error. */
     e4c_exception_type type;
 
     /** The name of the exception type. */
-    const char * name;
+    const char *name;
 
     /** A text message describing the specific problem. */
     char message[EXCEPTIONS4C_MAX_LENGTH];
@@ -190,7 +192,7 @@ struct e4c_exception {
      * @pre
      * This member is only available if <tt>NDEBUG</tt> is not defined.
      */
-    const char * file;
+    const char *file;
 
     /**
      * The line number in the source file that threw this exception.
@@ -212,9 +214,9 @@ struct e4c_context {
     unsigned char blocks;
     struct e4c_exception thrown;
     struct e4c_block {
-      unsigned char stage;
-      unsigned char uncaught;
-      jmp_buf jump;
+        unsigned char stage;
+        unsigned char uncaught;
+        jmp_buf jump;
     } block[EXCEPTIONS4C_MAX_BLOCKS];
 };
 
@@ -256,23 +258,29 @@ extern struct e4c_context exceptions4c;
 /**
  * Introduces a block of code that may throw exceptions during execution.
  *
- * The #TRY block is used to define a section of code where exceptions might
+ * The #TRY block is used to define a section of code where exceptions MAY
  * occur. It allows you to handle exceptions gracefully using other blocks that
  * follow it. If an exception occurs, control is transferred to the appropriate
  * block.
  *
- * A single #TRY block can be followed by:
+ * A single #TRY block MAY be followed by:
  *
- * - One or more #CATCH blocks to handle specific types of exceptions.
- * - Optionally, one #CATCH_ALL block to handle all exception types (if present,
- *   it must appear after all #CATCH blocks).
- * - Optionally, one #FINALLY block to execute cleanup code, regardless of
- *   whether an exception was thrown or caught.
+ * 1. One or more #CATCH blocks to handle specific types of exceptions.
+ * 2. Optionally, one #CATCH_ALL block to handle all exception types (if
+ *    present, it MUST appear after all #CATCH blocks).
+ * 3. Optionally, one #FINALLY block to execute cleanup code, regardless of
+ *    whether an exception was thrown or caught.
  *
- * @note
- * The blocks must appear in this order: #CATCH blocks (if any), #CATCH_ALL
- * block (if any), and #FINALLY block (if any). A single #TRY block MUST be
- * followed by, at least, one #CATCH, #CATCH_ALL, or #FINALLY block.
+ * @attention
+ * These blocks MUST NOT be exited through any of: <tt>goto</tt>,
+ * <tt>break</tt>, <tt>continue</tt>, or <tt>return</tt>.
+ *
+ * @important
+ * Local variables in the function containing the #TRY block MUST be
+ * <tt>volatile</tt> because these blocks invoke <tt>setjump</tt> and their
+ * values would be indeterminate if they had been changed since the invocation.
+ *
+ * Example: @snippet pet-store.c try
  *
  * @see CATCH
  * @see CATCH_ALL
@@ -298,14 +306,25 @@ extern struct e4c_context exceptions4c;
  * Introduces a block of code that handles exceptions thrown by a preceding #TRY
  * block.
  *
- * @param exception_type the type of exception to catch.
+ * Use this macro to to handle a specific type of exceptions when they occur.
  *
- * One or more #CATCH blocks can follow a #TRY block. Each #CATCH block MUST
- * specify the type of exception it handles.
+ * If <tt>type</tt> is equal to the type of the [thrown exception](#EXCEPTION),
+ * then this block will be used to handle it.
+ *
+ * One or more #CATCH blocks MAY follow a #TRY block. If <tt>type</tt> doesn't
+ * match the thrown exception, then this block will be ignored, and the
+ * exception MAY be caught by the following #CATCH or #CATCH_ALL blocks.
+ *
+ * @attention
+ * These blocks MUST NOT be exited through any of: <tt>goto</tt>,
+ * <tt>break</tt>, <tt>continue</tt>, or <tt>return</tt>.
+ *
+ * @param exception_type The type of exception to catch.
+ *
+ * Example: @snippet pet-store.c catch
  *
  * @see TRY
  * @see CATCH_ALL
- *
  */
 #define CATCH(exception_type)                                               \
                                                                             \
@@ -319,11 +338,11 @@ extern struct e4c_context exceptions4c;
  * #TRY block, regardless of its type.
  *
  * The #CATCH_ALL block works like a general #CATCH block that does not require
- * specifying the type of exception to handle. It acts as a fallback for
+ * specifying the type of exception to handle. It MAY be used as a fallback for
  * catching all exceptions, including those not explicitly declared in other
  * #CATCH blocks.
  *
- * Only one #CATCH_ALL block is allowed per #TRY block, and it must appear after
+ * Only one #CATCH_ALL block is allowed per #TRY block, and it MUST appear after
  * all type-specific #CATCH blocks if any are present.
  *
  * @remark
@@ -331,6 +350,12 @@ extern struct e4c_context exceptions4c;
  * unexpected exceptions that don't fit into specific categories. However,
  * specific #CATCH blocks SHOULD be used whenever possible to maintain clarity
  * and precise control over exception handling.
+ *
+ * @attention
+ * These blocks MUST NOT be exited through any of: <tt>goto</tt>,
+ * <tt>break</tt>, <tt>continue</tt>, or <tt>return</tt>.
+ *
+ * Example: @snippet pet-store.c catch_all
  *
  * @see TRY
  * @see CATCH
@@ -345,12 +370,21 @@ extern struct e4c_context exceptions4c;
  * Introduces a block of code that is executed after a #TRY block, regardless of
  * whether an exception was thrown or not.
  *
- * A #FINALLY block can follow a #TRY block, with or without accompanying #CATCH
- * blocks. Only one #FINALLY block is allowed per #TRY block.
+ * Use this macro to run a block, no matter whether an exception happens or not.
+ *
+ * A #FINALLY block MUST be preceded by a single #TRY block, after all the
+ * accompanying #CATCH and #CATCH_ALL blocks (if any). Only one #FINALLY block
+ * is allowed per block.
+ *
+ * @attention
+ * These blocks MUST NOT be exited through any of: <tt>goto</tt>,
+ * <tt>break</tt>, <tt>continue</tt>, or <tt>return</tt>.
  *
  * @remark
- * It is typically used to release resources, close files, or perform cleanup
- * tasks.
+ * This macro SHOULD be used to release resources, close files, or perform
+ * cleanup tasks.
+ *
+ * Example: @snippet pet-store.c finally
  *
  * @see TRY
  */
@@ -361,12 +395,9 @@ extern struct e4c_context exceptions4c;
 /**
  * Throws an exception, interrupting the normal flow of execution.
  *
- * @param exception_type the type of the exception to throw.
- * @param error_message the error message.
- *
  * #THROW is used within a #TRY block, a #CATCH block, or any other function to
  * signal that an error has occurred. The thrown exception will be of the
- * specified type, and it MAY be handled by a preceding #CATCH block.
+ * specified <tt>type</tt>, and it MAY be handled by a preceding #CATCH block.
  *
  * If a thrown exception is not handled by any of the #CATCH blocks in the
  * current function, it propagates up the call stack to the function that called
@@ -375,11 +406,22 @@ extern struct e4c_context exceptions4c;
  * program. If no #CATCH block handles the exception, the program terminates and
  * an error message is printed to the console.
  *
- * @note
+ * @remark
  * The error message will be copied as it is into the thrown #EXCEPTION. To use
- * a formatted error message, use #THROWF instead.
+ * a formatted error message, use #THROWF instead. If no message is specified,
+ * then the default message for the exception type will be used.
+ *
+ * @important
+ * Control never returns to the #THROW point.
+ *
+ * Example: @snippet pet-store.c throw
+ *
+ * @param exception_type The type of the exception to throw.
+ * @param error_message The error message.
  *
  * @see THROWF
+ * @see CATCH
+ * @see CATCH_ALL
  */
 #define THROW(exception_type, error_message)                                \
                                                                             \
@@ -394,15 +436,22 @@ extern struct e4c_context exceptions4c;
 /**
  * Throws an exception with a formatted error message.
  *
- * @param exception_type the type of the exception to throw.
- * @param format the error message.
- * @param ... a list of arguments that will be formatted according to
- *   <tt>format</tt>.
- *
  * This macro works just like #THROW, but it allows you to format the error
  * message, just as you would with <tt>printf</tt>.
  *
+ * @important
+ * Control never returns to the #THROW point.
+ *
+ * Example: @snippet pet-store.c throw
+ *
+ * @param exception_type The type of the exception to throw.
+ * @param format The error message.
+ * @param ... A list of arguments that will be formatted according to
+ *   <tt>format</tt>.
+ *
  * @see THROW
+ * @see CATCH
+ * @see CATCH_ALL
  */
 #define THROWF(exception_type, format, ...)                                 \
                                                                             \
@@ -415,14 +464,15 @@ extern struct e4c_context exceptions4c;
 /**
  * Retrieves the last exception that was thrown.
  *
- * @return the last exception that was thrown.
- *
+ * @remark
  * This macro SHOULD be used in the body of a #CATCH or #CATCH_ALL block to
- * inspect the exception being handled.
+ * inspect the exception being handled. It MAY also be used in the body of a
+ * #FINALLY block to determine if an exception was thrown in the corresponding
+ * #TRY block, or during the execution of a #CATCH or #CATCH_ALL block.
  *
- * It MAY also be used in the body of a #FINALLY block to determine if an
- * exception was thrown in the corresponding #TRY block, or during the execution
- * of a #CATCH or #CATCH_ALL block.
+ * Example: @snippet pet-store.c catch_all_get_exception
+ *
+ * @return The last exception that was thrown.
  *
  * @see e4c_exception
  * @see THROW
@@ -435,11 +485,7 @@ extern struct e4c_context exceptions4c;
   exceptions4c.thrown
 
 /**
- * Determines whether the current exception (if any) hasn't been handled yet by
- * any #CATCH or #CATCH_ALL block.
- *
- * @return whether the thrown exception was not caught by any #CATCH or
- *   #CATCH_ALL block.
+ * Determines whether the thrown exception was not caught.
  *
  * An exception is considered "uncaught" if no matching #CATCH or #CATCH_ALL
  * block has been executed for it. In other words, this macro evaluates to a
@@ -452,6 +498,11 @@ extern struct e4c_context exceptions4c;
  * This macro SHOULD be used exclusively in the body of a #FINALLY block to
  * check whether an exception thrown during the #TRY block has propagated past
  * all #CATCH and #CATCH_ALL blocks without being handled.
+ *
+ * Example: @snippet pet-store.c is_uncaught
+ *
+ * @return A truthy value if the current exception (if any) has not yet been
+ *   handled by any #CATCH or #CATCH_ALL block; a falsy value otherwise.
  *
  * @see FINALLY
  * @see EXCEPTION

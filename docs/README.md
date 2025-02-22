@@ -92,6 +92,9 @@ serve specific purposes.
 > A single #TRY block must be followed by one or more #CATCH blocks to handle the errors, and an optional #FINALLY block
 > to execute cleanup code.
 
+> [!CAUTION]
+> Never exit these blocks using `goto`, `break`, `continue`, or `return`.
+
 ## Catching Exceptions
 
 To prevent the program from crashing, exceptions need to be handled properly in designated sections of the code.
@@ -115,8 +118,15 @@ On the other hand, the #CATCH_ALL block is a special block that can handle all t
 Only one #CATCH_ALL block is allowed per #TRY block, and it must appear after all type-specific #CATCH blocks if any are
 present.
 
+### Retrieving the Current Exception
+
+Use #EXCEPTION to retrieve the exception currently being handled.
+
+@snippet pet-store.c catch_all_get_exception
+
 > [!TIP]
-> Use #EXCEPTION to retrieve the exception currently being handled.
+> This allows for inspection and further handling of the error, based on both its type and the detailed context of the
+> situation.
 
 ## Ensuring Cleanup
 
@@ -157,9 +167,9 @@ You can define these macros to customize exceptions4c-lite:
 This library should compile in any ANSI C compiler.
 
 > [!TIP]
-> For a fully-featured exception handling library, consider using the complete version, [exceptions4c][EXCEPTIONS4C].
-> And if you're looking for a cleaner, safer, and more modern approach to error handling that doesn't involve throwing
-> and catching exceptions, you may want to take a look at [Result Library][RESULT_LIBRARY].
+> For a fully-featured exception handling library, consider using the complete version [exceptions4c][EXCEPTIONS4C],
+> which is also Open Source. And if you're looking for a cleaner, safer, and more modern approach to error handling that
+> doesn't involve throwing and catching exceptions, you may want to take a look at [Result Library][RESULT_LIBRARY].
 
 ## Caveat
 

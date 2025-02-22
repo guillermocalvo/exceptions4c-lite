@@ -77,11 +77,17 @@ GENERATE_TREEVIEW      = YES
 HTML_EXTRA_STYLESHEET  = ./docs/doxygen-awesome.css \
                          ./docs/doxygen-awesome-sidebar-only.css \
                          ./docs/exceptions4c-lite.css
-HTML_EXTRA_FILES       = ./docs/info-16.svg \
-                         ./docs/alert-16.svg \
-                         ./docs/report-16.svg \
-                         ./docs/stop-16.svg \
-                         ./docs/light-bulb-16.svg
+HTML_EXTRA_FILES       = ./docs/octicons/alert-16.svg \
+                         ./docs/octicons/bug-16.svg \
+                         ./docs/octicons/check-circle-16.svg \
+                         ./docs/octicons/check-circle-fill-16.svg \
+                         ./docs/octicons/checkbox-16.svg \
+                         ./docs/octicons/eye-16.svg \
+                         ./docs/octicons/info-16.svg \
+                         ./docs/octicons/light-bulb-16.svg \
+                         ./docs/octicons/report-16.svg \
+                         ./docs/octicons/stop-16.svg \
+                         ./docs/octicons/trash-16.svg
 
 
 #---------------------------------------------------------------------------
