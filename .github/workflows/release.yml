@@ -25,3 +25,10 @@ jobs:
     # ================================
     - name: Create Release
       uses: softprops/action-gh-release@v2
+      with:
+        preserve_order: true
+        files: |
+          src/exceptions4c-lite.h
+          LICENSE
+          NOTICE
+          CHANGELOG.md
