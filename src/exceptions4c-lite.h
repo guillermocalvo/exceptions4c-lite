@@ -39,7 +39,7 @@
  * [GitHub](https://github.com/guillermocalvo/exceptions4c).
  *
  * @file        exceptions4c-lite.h
- * @version     0.1.0
+ * @version     1.0.0
  * @author      [Guillermo Calvo](https://guillermo.dev)
  * @copyright   Licensed under [Apache 2.0]
  * @see         For more information, visit the [project on GitHub]
@@ -54,7 +54,7 @@
 /**
  * Returns the major version number of this library.
  */
-#define EXCEPTIONS4C_LITE 0
+#define EXCEPTIONS4C_LITE 1
 
 #include <setjmp.h> /* longjmp, setjmp */
 #include <stdio.h> /* fflush, fprintf, snprintf, sprintf, stderr */

@@ -7,9 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
-## [Unreleased]
+## [1.0.0]
 
-No unreleased changes.
+First stable release.
+
+### Changed
+
+- Macro `EXCEPTIONS4C_LITE` changed from `0` to `1`
 
 
 ## [0.1.0]
@@ -38,5 +42,5 @@ Initial development release.
 - Global variable `exceptions4c`
 
 
-[Unreleased]: https://github.com/guillermocalvo/exceptions4c-lite/compare/main...develop
 [0.1.0]: https://github.com/guillermocalvo/exceptions4c-lite/releases/tag/0.1.0
+[0.1.0]: https://github.com/guillermocalvo/exceptions4c-lite/releases/tag/1.0.0
